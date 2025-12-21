@@ -1,80 +1,97 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'; // NestJS service and exceptions
-import { JwtService } from '@nestjs/jwt'; // JWT service
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
-import * as bcrypt from 'bcrypt'; // Password hashing
+import * as bcrypt from 'bcrypt';
 
-import { UsersService } from '../users/users.service'; // User service
+import { UsersService } from '../users/users.service';
 
-import { LoginDto } from './dto/login.dto'; // Login data structure
-import { Console } from 'console'; // Console for logging
+import { LoginDto } from './dto/login.dto';
 
-@Injectable() // Marks class as injectable service
+@Injectable()
 export class AuthService {
 
   constructor(
-    private readonly usersService: UsersService, // Inject user service
-    private readonly jwtService: JwtService // Inject JWT service
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService
   ) { }
 
+  // Authenticate user and return JWT token
   async login(loginDto: LoginDto) {
-    console.log('🚀 AUTH SERVICE - Login attempt for username:', loginDto.username); // Log username
-    console.log('🚀 AUTH SERVICE - Login attempt for password:', loginDto.password); // Log password attempt
-    const user = await this.usersService.findOneByUsername(loginDto.username); // Find user
-    console.log('🔥 AUTH SERVICE - User found:', user ? 'YES' : 'NO'); // Log if user exists
+    console.log('🚀 AUTH SERVICE - Login attempt for username:', loginDto.username);
+    console.log('🚀 AUTH SERVICE - Login attempt for password:', loginDto.password);
+    
+    // Find user by username
+    const user = await this.usersService.findOneByUsername(loginDto.username);
+    console.log('🔥 AUTH SERVICE - User found:', user ? 'YES' : 'NO');
 
+    // Throw error if user doesn't exist
     if (!user) {
-      console.log('🔥 AUTH SERVICE - User not found, throwing error'); // Log error
-      throw new UnauthorizedException('Invalid username or password'); // Throw error
+      console.log('🔥 AUTH SERVICE - User not found, throwing error');
+      throw new UnauthorizedException('Invalid username or password');
     }
 
-    console.log('🔑 AUTH SERVICE - Comparing passwords...'); // Log password check
-    const isMatch = loginDto.password === user.password; // Check password
-    console.log('🔑 AUTH SERVICE - Password match:', isMatch ? 'YES' : 'NO'); // Log result
+    console.log('🔑 AUTH SERVICE - Comparing passwords...');
+    
+    // Compare plaintext password with hashed password from database
+    const isMatch = await bcrypt.compare(loginDto.password, user.password);
+    console.log('🔑 AUTH SERVICE - Password match:', isMatch ? 'YES' : 'NO');
 
+    // Throw error if password doesn't match
     if (!isMatch) {
-      console.log('🔥 AUTH SERVICE - Password mismatch, throwing error'); // Log mismatch
-      throw new UnauthorizedException('Invalid username or password'); // Throw error
+      console.log('🔥 AUTH SERVICE - Password mismatch, throwing error');
+      throw new UnauthorizedException('Invalid username or password');
     }
 
-    const payload = { sub: user._id, username: user.username }; // JWT payload
+    // Create JWT payload with user ID and username
+    const payload = { sub: user._id, username: user.username };
 
-    console.log('✅ AUTH SERVICE - Login successful, generating token'); // Log success
+    console.log('✅ AUTH SERVICE - Login successful, generating token');
 
+    // Return JWT access token
     return {
-      access_token: await this.jwtService.signAsync(payload), // Return token
+      access_token: await this.jwtService.signAsync(payload),
     };
   }
 
+  // Register new user and return JWT token
   async register(loginDto: LoginDto) {
-    console.log('📝 AUTH SERVICE - Register attempt for username:', loginDto.username); // Log registration attempt
+    console.log('📝 AUTH SERVICE - Register attempt for username:', loginDto.username);
     
-    const existingUser = await this.usersService.findOneByUsername(loginDto.username); // Check if user exists
+    // Check if username already exists
+    const existingUser = await this.usersService.findOneByUsername(loginDto.username);
     
+    // Throw error if username is taken
     if (existingUser) {
-      console.log('❌ AUTH SERVICE - Username already exists'); // Log error
-      throw new UnauthorizedException('Username already exists'); // Throw error
+      console.log('❌ AUTH SERVICE - Username already exists');
+      throw new UnauthorizedException('Username already exists');
     }
 
-    console.log('🔒 AUTH SERVICE - Hashing password...'); // Log hashing
-    const hashedPassword = await bcrypt.hash(loginDto.password, 10); // Hash password
+    console.log('🔒 AUTH SERVICE - Hashing password...');
+    
+    // Hash password with bcrypt (salt rounds: 10)
+    const hashedPassword = await bcrypt.hash(loginDto.password, 10);
 
-    console.log('📝 AUTH SERVICE - Creating user...'); // Log user creation
+    console.log('📝 AUTH SERVICE - Creating user...');
+    
+    // Save new user to database with hashed password
     const newUser = await this.usersService.create({
       username: loginDto.username,
       password: hashedPassword,
       name: loginDto.username,
       email: '',
-      role: 'user' // Default role
+      role: 'user'
     });
 
-    const payload = { sub: newUser._id, username: newUser.username }; // JWT payload
+    // Create JWT payload with new user info
+    const payload = { sub: newUser._id, username: newUser.username };
 
-    console.log('✅ AUTH SERVICE - Registration successful'); // Log success
+    console.log('✅ AUTH SERVICE - Registration successful');
 
+    // Return JWT access token and success message
     return {
-      access_token: await this.jwtService.signAsync(payload), // Return token
-      message: 'Registration successful', // Success message
-      username: newUser.username // Return username
+      access_token: await this.jwtService.signAsync(payload),
+      message: 'Registration successful',
+      username: newUser.username
     };
   }
 }

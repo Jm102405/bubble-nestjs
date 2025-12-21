@@ -1,43 +1,52 @@
-import { Controller, Post, Body } from '@nestjs/common'; // NestJS decorators
-import { ApiTags } from '@nestjs/swagger'; // Swagger tag for grouping endpoints
+import { Controller, Post, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
-import { AuthService } from './auth.service'; // Authentication service
-import { UsersService } from '../users/users.service'; // User service
+import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import * as bcrypt from 'bcrypt';
 
-import { LoginDto } from './dto/login.dto'; // Login data structure
-
-@ApiTags('Auth') // Swagger group name
-@Controller('api/auth') // Auth route prefix
+@ApiTags('Auth')
+@Controller('api/auth')
 export class AuthController {
-
   constructor(
-    private readonly authService: AuthService, // Handles login logic
-    private readonly usersService: UsersService // Handles user creation
-  ) { }
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  @Post("login") // Login endpoint
+  @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto); // Authenticate user
+    return this.authService.login(loginDto);
   }
 
-  @Post("register") // Register endpoint
-  async register(@Body() body: any) {
-    console.log('🟢 REGISTER - Received data:', body); // Log request data
-    
+  @Post('register')
+  async register(@Body() body: RegisterDto) {
+    console.log('🟢 REGISTER - Received data:', body);
+
+    const { username, email, password, name, role } = body;
+
+    const existing = await this.usersService.findByEmail(email);
+    if (existing) {
+      return { message: 'Email already in use' };
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
     const newUser = await this.usersService.create({
-      username: body.username,
-      password: body.password,
-      email: body.email,
-      name: body.name,
-      role: body.role || 'user' // Default role
+      username,
+      password: hashed,
+      email,
+      name,
+      role: role || 'user',
     });
-    
-    console.log('🟢 REGISTER - User created successfully:', newUser.username); // Log success
-    
-    return { 
-      message: 'User registered successfully', // Success message
+
+    console.log('🟢 REGISTER - User created successfully:', newUser.username);
+
+    return {
+      message: 'User registered successfully',
       username: newUser.username,
-      email: newUser.email 
+      email: newUser.email,
     };
   }
 }

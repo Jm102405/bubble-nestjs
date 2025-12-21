@@ -1,22 +1,19 @@
-import { NestFactory } from '@nestjs/core'; // NestJS core factory
-import { AppModule } from './app.module'; // Root module
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule); // Create app instance
+  const app = await NestFactory.create(AppModule);
   
-  // ✅ FIX: Enable CORS for specific origins
+  // ✅ Enable CORS for all origins (dev mode)
   app.enableCors({
-    origin: [
-      'http://localhost:4200',
-      'http://localhost:49668'
-    ],
+    origin: true,        // allows all origins (dev only - for production, specify exact origins)
     credentials: true,
   });
   
-  await app.listen(3000); // Start server
-  console.log('🚀 NestJS running on http://localhost:3000'); // Log server start
+  await app.listen(3000);
+  console.log('🚀 NestJS running on http://localhost:3000');
 }
 
 bootstrap().catch((err) => {
-  console.error('Error starting application:', err); // Log bootstrap errors
+  console.error('Error starting application:', err);
 });
