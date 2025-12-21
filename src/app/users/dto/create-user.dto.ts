@@ -1,18 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'; // Swagger decorator for API docs
 
 export class CreateUserDto {
-  @ApiProperty()
+  @ApiProperty() // User's full name
   name: string;
 
-  @ApiProperty()
+  @ApiProperty() // User's email address
   email: string;
 
-  @ApiProperty()
+  @ApiProperty() // Username for login
   username: string;
 
-  @ApiProperty()
+  @ApiProperty() // User password
   password: string;
 
-  @ApiProperty()
+  @ApiProperty() // User role (e.g., admin, user)
   role: string;
 }

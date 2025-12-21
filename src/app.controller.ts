@@ -1,14 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get } from '@nestjs/common'; // NestJS decorators
+import { AppService } from './app.service'; // Service for business logic
 
-@Controller()
+@Controller() // Root controller
 export class AppController {
   constructor(
-    private readonly appService: AppService
+    private readonly appService: AppService // Inject AppService
   ) { }
 
-  @Get()
+  @Get() // GET / endpoint
   getHello(): string {
-    return this.appService.getHello();
+    return this.appService.getHello(); // Return greeting
   }
 }

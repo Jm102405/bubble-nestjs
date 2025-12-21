@@ -1,9 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'; // Swagger decorator for API docs
 
 export class LoginDto {
-    @ApiProperty()
+    @ApiProperty() // Username field for login
     username: string;
 
-    @ApiProperty()
+    @ApiProperty() // Password field for login
     password: string;
 }

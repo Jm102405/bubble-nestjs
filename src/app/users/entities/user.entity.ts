@@ -1,9 +1,9 @@
-import { Document } from 'mongoose';
+import { Document } from 'mongoose'; // Mongoose document type
 
 export interface User extends Document {
-  readonly username: string;
-  readonly email: string;
-  readonly password: string;
-  readonly name?: string;
-  readonly createdAt: Date;
+  readonly username: string; // Username
+  readonly email: string; // Email address
+  readonly password: string; // Hashed password
+  readonly name?: string; // Optional full name
+  readonly createdAt: Date; // Creation timestamp
 }

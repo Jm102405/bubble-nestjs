@@ -1,21 +1,21 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { Module } from '@nestjs/common'; // NestJS module decorator
+import { ConfigModule } from '@nestjs/config'; // Config module for environment variables
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller'; // Root controller
+import { AppService } from './app.service'; // Root service
 
-import { AuthModule } from './app/auth/auth.module';
-import { UsersModule } from './app/users/users.module';
+import { AuthModule } from './app/auth/auth.module'; // Auth module
+import { UsersModule } from './app/users/users.module'; // Users module
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
+    ConfigModule.forRoot({ // Load .env globally
       isGlobal: true,
     }),
-    AuthModule,
-    UsersModule,
+    AuthModule, // Import auth module
+    UsersModule, // Import users module
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController], // Register root controller
+  providers: [AppService], // Register root service
 })
-export class AppModule { }
+export class AppModule { } // Root application module

@@ -1,42 +1,42 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module } from '@nestjs/common'; // NestJS module decorator
+import { JwtModule } from '@nestjs/jwt'; // JWT module
+import { ConfigModule, ConfigService } from '@nestjs/config'; // Config utilities
 
-import { Mongoose } from 'mongoose';
+import { Mongoose } from 'mongoose'; // Mongoose type
 
-import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service'; // Auth logic
+import { UsersService } from '../users/users.service'; // User service
 
-import { AuthController } from './auth.controller';
+import { AuthController } from './auth.controller'; // Auth controller
 
-import { DatabaseModule } from 'src/database/database.module';
-import { UserSchema } from 'src/database/schemas/users.schema';
+import { DatabaseModule } from 'src/database/database.module'; // Database module
+import { UserSchema } from 'src/database/schemas/users.schema'; // User schema
 
 @Module({
   controllers: [
-    AuthController
+    AuthController // Register auth controller
   ],
   providers: [
-    AuthService,
-    UsersService,
+    AuthService, // Auth service provider
+    UsersService, // User service provider
     {
-      provide: 'USERS_MODEL',
+      provide: 'USERS_MODEL', // Mongoose user model
       useFactory: (mongoose: Mongoose) => mongoose.model('users', UserSchema),
-      inject: ['DATABASE_CONNECTION'],
+      inject: ['DATABASE_CONNECTION'], // Inject DB connection
     },
   ],
   imports: [
-    ConfigModule,
-    JwtModule.registerAsync({
+    ConfigModule, // Config module
+    JwtModule.registerAsync({ // JWT configuration
       global: true,
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60s' },
+        secret: config.get<string>('JWT_SECRET'), // JWT secret
+        signOptions: { expiresIn: '60s' }, // Token expiry
       }),
     }),
-    DatabaseModule,
+    DatabaseModule, // Database connection
   ]
 })
-export class AuthModule { }
+export class AuthModule { } // Auth module
