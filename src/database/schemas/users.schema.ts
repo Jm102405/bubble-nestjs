@@ -5,5 +5,6 @@ export const UserSchema = new Schema({
   email: { type: String, required: true, unique: true }, // Unique email
   password: { type: String, required: true }, // Hashed password
   name: { type: String }, // Optional full name
+  role: { type: String, default: 'user' }, // role
   createdAt: { type: Date, default: Date.now }, // Timestamp
 });

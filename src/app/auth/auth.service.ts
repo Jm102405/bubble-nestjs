@@ -42,8 +42,8 @@ export class AuthService {
       throw new UnauthorizedException('Invalid username or password');
     }
 
-    // Create JWT payload with user ID and username
-    const payload = { sub: user._id, username: user.username };
+    // ✅ Create JWT payload with user ID, username, and role
+    const payload = { sub: user._id, username: user.username, role: user.role };
 
     console.log('✅ AUTH SERVICE - Login successful, generating token');
 
@@ -79,11 +79,11 @@ export class AuthService {
       password: hashedPassword,
       name: loginDto.username,
       email: '',
-      role: 'user'
+      role: 'user'   // default role
     });
 
-    // Create JWT payload with new user info
-    const payload = { sub: newUser._id, username: newUser.username };
+    // ✅ Create JWT payload with new user info and role
+    const payload = { sub: newUser._id, username: newUser.username, role: newUser.role };
 
     console.log('✅ AUTH SERVICE - Registration successful');
 

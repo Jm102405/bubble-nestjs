@@ -7,3 +7,4 @@ export const databaseProviders = [
       mongoose.connect('mongodb://localhost:27017/Authentication'), // Connect to MongoDB
   },
 ];
+  

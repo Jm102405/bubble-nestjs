@@ -5,5 +5,6 @@ export interface User extends Document {
   readonly email: string; // Email address
   readonly password: string; // Hashed password
   readonly name?: string; // Optional full name
+  readonly role: string;  // User role
   readonly createdAt: Date; // Creation timestamp
 }
