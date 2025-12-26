@@ -6,6 +6,7 @@ import { AppService } from './app.service'; // Root service
 
 import { AuthModule } from './app/auth/auth.module'; // Auth module
 import { UsersModule } from './app/users/users.module'; // Users module
+import { ClientsModule } from './app/clients/clients.module'; // ✅ Clients module
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UsersModule } from './app/users/users.module'; // Users module
     }),
     AuthModule, // Import auth module
     UsersModule, // Import users module
+    ClientsModule, // ✅ Import clients module
   ],
   controllers: [AppController], // Register root controller
   providers: [AppService], // Register root service
