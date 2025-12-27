@@ -4,7 +4,7 @@ export const databaseProviders = [
   {
     provide: 'DATABASE_CONNECTION', // Injection token for DB connection
     useFactory: (): Promise<typeof mongoose> =>
-      mongoose.connect('mongodb://localhost:27017/Authentication'), // Connect to MongoDB
+      mongoose.connect('mongodb://localhost:27017/Bubble&Cuddle_Database'), // Connect to MongoDB
   },
 ];
   
