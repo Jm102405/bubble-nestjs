@@ -32,8 +32,10 @@ import { UserSchema } from 'src/database/schemas/users.schema'; // User schema
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET'), // JWT secret
-        signOptions: { expiresIn: '60s' }, // Token expiry
+        secret: config.get<string>('JWT_SECRET')!,
+        signOptions: { 
+          expiresIn: (config.get<string>('JWT_EXPIRES_IN') || '7d') as any 
+        },
       }),
     }),
     DatabaseModule, // Database connection

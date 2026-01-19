@@ -1,5 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config'; // ✅ Add this import
 
 import * as bcrypt from 'bcrypt';
 
@@ -12,7 +13,8 @@ export class AuthService {
 
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService, // ✅ Add this line
   ) { }
 
   // Authenticate user and return JWT token
@@ -68,8 +70,11 @@ export class AuthService {
 
     console.log('🔒 AUTH SERVICE - Hashing password...');
     
-    // Hash password with bcrypt (salt rounds: 10)
-    const hashedPassword = await bcrypt.hash(loginDto.password, 10);
+    // ✅ Get salt rounds from .env (defaults to 10 if not set)
+    const saltRounds = this.configService.get<number>('BCRYPT_SALT_ROUNDS') || 10;
+    
+    // Hash password with bcrypt using salt rounds from .env
+    const hashedPassword = await bcrypt.hash(loginDto.password, saltRounds);
 
     console.log('📝 AUTH SERVICE - Creating user...');
     
