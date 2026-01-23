@@ -15,4 +15,7 @@ export class CreateUserDto {
 
   @ApiProperty() // User role (e.g., admin, user)
   role: string;
+
+  @ApiProperty({ required: false }) // ✅ User profile photo URL
+  photoUrl?: string; // ✅ ADD THIS
 }

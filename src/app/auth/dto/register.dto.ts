@@ -4,4 +4,5 @@ export class RegisterDto {
   password: string;
   name: string;
   role?: string;
+  profileImage?: string; // ✅ ADD THIS LINE
 }

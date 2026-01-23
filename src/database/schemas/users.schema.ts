@@ -6,5 +6,6 @@ export const UserSchema = new Schema({
   password: { type: String, required: true }, // Hashed password
   name: { type: String }, // Optional full name
   role: { type: String, default: 'user' }, // role
+  photoUrl: { type: String, required: false, default: null }, // ✅ NEW: Profile photo URL
   createdAt: { type: Date, default: Date.now }, // Timestamp
 });

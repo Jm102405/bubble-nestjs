@@ -1,6 +1,7 @@
+// auth.service.ts - FULL CODE
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config'; // ✅ Add this import
+import { ConfigService } from '@nestjs/config';
 
 import * as bcrypt from 'bcrypt';
 
@@ -14,7 +15,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService, // ✅ Add this line
+    private readonly configService: ConfigService,
   ) { }
 
   // Authenticate user and return JWT token
@@ -49,9 +50,17 @@ export class AuthService {
 
     console.log('✅ AUTH SERVICE - Login successful, generating token');
 
-    // Return JWT access token
+    // ✅✅ UPDATED: Return JWT access token AND user data
     return {
       access_token: await this.jwtService.signAsync(payload),
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        photoUrl: user.photoUrl || null
+      }
     };
   }
 

@@ -24,7 +24,7 @@ export class AuthController {
   async register(@Body() body: RegisterDto) {
     console.log('🟢 REGISTER - Received data:', body);
 
-    const { username, email, password, name, role } = body;
+    const { username, email, password, name, role, profileImage } = body; // ✅ ADD profileImage
 
     const existing = await this.usersService.findByEmail(email);
     if (existing) {
@@ -39,6 +39,7 @@ export class AuthController {
       email,
       name,
       role: role || 'user',
+      photoUrl: profileImage || 'https://i.pravatar.cc/150?img=47' // ✅ ADD photoUrl with default
     });
 
     console.log('🟢 REGISTER - User created successfully:', newUser.username);
