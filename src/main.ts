@@ -1,4 +1,4 @@
-// src/main.ts - FULL CODE WITH DEBUG LOGGING
+// src/main.ts - FULL OPTIMIZED CODE (MEMORY FIX)
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
@@ -12,17 +12,10 @@ async function bootstrap() {
   app.use(urlencoded({ limit: '10mb', extended: true }));
   
   const configService = app.get(ConfigService);
-  
-  // ✅ DEBUG: Log CORS_ORIGIN value
   const corsOrigin = configService.get<string>('CORS_ORIGIN');
-  console.log('🔍 CORS_ORIGIN from env:', corsOrigin);
-  console.log('🔍 ALL ENV VARS:', {
-    NODE_ENV: configService.get('NODE_ENV'),
-    PORT: configService.get('PORT'),
-    CORS_ORIGIN: corsOrigin,
-    JWT_SECRET: configService.get('JWT_SECRET') ? '***set***' : 'NOT SET',
-    MONGODB_URI: configService.get('MONGODB_URI') ? '***set***' : 'NOT SET'
-  });
+  
+  // ✅ Minimal logging (prevent memory issues)
+  console.log('🔍 CORS enabled for:', corsOrigin || 'ALL ORIGINS');
   
   // ✅ Enable CORS with origin from .env
   app.enableCors({
@@ -35,10 +28,9 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') || 3000;
   
   await app.listen(port);
-  console.log(`🚀 NestJS running on http://localhost:${port}`);
-  console.log(`✅ CORS enabled for: ${corsOrigin || 'ALL ORIGINS'}`);
+  console.log(`🚀 NestJS running on port ${port}`);
 }
 
 bootstrap().catch((err) => {
-  console.error('Error starting application:', err);
+  console.error('❌ Error starting application:', err);
 });
